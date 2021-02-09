@@ -11,7 +11,10 @@ import (
 	"os"
 )
 
-type server struct{}
+type server struct{
+	// [mustEmbedUnimplemented*** method appear in grpc-server #3794](https://github.com/grpc/grpc-go/issues/3794)
+	helloworld.UnimplementedGreeterServer
+}
 
 func (s *server) SayHello(ctx context.Context, in *helloworld.HelloRequest) (*helloworld.HelloReply, error) {
 	log.Printf("Received: %v", in.Name)

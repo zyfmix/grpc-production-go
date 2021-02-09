@@ -21,7 +21,7 @@ func TimeoutLogExample() {
 
 	defer cc.Close()
 	ctx := context.Background()
-	md := metadata.Pairs("user", "user", "pass", "123")
+	md := metadata.Pairs("user", "zhangyafei", "pass", "123456789")
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
