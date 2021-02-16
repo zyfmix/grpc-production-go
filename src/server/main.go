@@ -1,6 +1,8 @@
 package main
 
+import "grpcs/src/server/source"
+
 func main() {
-	ServerInitialization()
+	source.ServerInitialization()
 	//ServerInitializationWithTLS()
 }

@@ -1,6 +1,8 @@
-package main
+package client
+
+import "grpcs/src/client/source"
 
 func main() {
-	TimeoutLogExample()
+	source.TimeoutLogExample()
 	//TLSConnExample()
 }

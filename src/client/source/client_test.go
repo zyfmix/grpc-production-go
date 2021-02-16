@@ -1,4 +1,4 @@
-package main
+package source
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"grpcs/src/grpcutils"
 	helloworld "grpcs/src/rpc/server"
-	grpc_server "grpcs/src/server"
+	"grpcs/src/server/source"
 	"grpcs/src/testdata"
 	gtest "grpcs/src/testing"
 	"grpcs/src/tlscert"
@@ -24,8 +24,8 @@ func startServer() {
 	})
 	server.Start()
 }
-func startServerWithTLS() grpc_server.GrpcServer {
-	builder := grpc_server.GrpcServerBuilder{}
+func startServerWithTLS() source.GrpcServer {
+	builder := source.GrpcServerBuilder{}
 	builder.SetUnaryInterceptors(grpcutils.GetDefaultUnaryServerInterceptors())
 	builder.SetTlsCert(&tlscert.Cert)
 	svr := builder.Build()
