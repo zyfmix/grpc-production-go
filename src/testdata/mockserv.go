@@ -2,10 +2,10 @@ package testdata
 
 import (
 	"context"
-	"google.golang.org/grpc/examples/helloworld/helloworld"
+	helloworld "grpcs/src/rpc/server"
 )
 
-type MockedService struct{
+type MockedService struct {
 	helloworld.UnimplementedGreeterServer
 }
 

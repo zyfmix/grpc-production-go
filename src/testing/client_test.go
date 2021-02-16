@@ -2,12 +2,12 @@ package testing
 
 import (
 	"context"
-	"github.com/apssouza22/grpc-production-go/testdata"
 	"github.com/stretchr/testify/assert"
+	helloworld "grpcs/src/rpc/server"
+	"grpcs/src/testdata"
 
-	"github.com/apssouza22/grpc-production-go/grpcutils"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/examples/helloworld/helloworld"
+	"grpcs/src/grpcutils"
 	"testing"
 )
 
@@ -28,7 +28,7 @@ func TestSayHelloPassingContext(t *testing.T) {
 	clientBuilder.WithInsecure()
 	clientBuilder.WithContext(ctx)
 	clientBuilder.WithOptions(grpc.WithContextDialer(GetBufDialer(server.GetListener())))
-	clientConn, err := clientBuilder.GetConn("localhost", "50051")
+	clientConn, err := clientBuilder.GetConn("localhost", "8080")
 
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)
@@ -51,7 +51,7 @@ func TestSayHelloNotPassingContext(t *testing.T) {
 	clientBuilder := InProcessingClientBuilder{Server: server}
 	clientBuilder.WithInsecure()
 	clientBuilder.WithOptions(grpc.WithContextDialer(GetBufDialer(server.GetListener())))
-	clientConn, err := clientBuilder.GetConn("localhost", "50051")
+	clientConn, err := clientBuilder.GetConn("localhost", "8080")
 
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)

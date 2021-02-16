@@ -1,4 +1,4 @@
-package clientinterceptor
+package client
 
 import (
 	"context"

@@ -1,8 +1,6 @@
 package grpcutils
 
 import (
-	"github.com/apssouza22/grpc-production-go/clientinterceptor"
-	interceptors "github.com/apssouza22/grpc-production-go/serverinterceptor"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	"github.com/opentracing/opentracing-go"
@@ -10,6 +8,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"grpcs/src/interceptors/client"
+	interceptors "grpcs/src/interceptors/server"
 )
 
 func requestErrorHandler(p interface{}) (err error) {
@@ -43,7 +43,7 @@ func GetDefaultUnaryClientInterceptors() []grpc.UnaryClientInterceptor {
 		grpc_opentracing.WithTracer(opentracing.GlobalTracer()),
 	)
 	interceptors := []grpc.UnaryClientInterceptor{
-		clientinterceptor.UnaryTimeoutInterceptor(),
+		client.UnaryTimeoutInterceptor(),
 		tracing,
 	}
 	return interceptors
@@ -55,7 +55,7 @@ func GetDefaultStreamClientInterceptors() []grpc.StreamClientInterceptor {
 		grpc_opentracing.WithTracer(opentracing.GlobalTracer()),
 	)
 	interceptors := []grpc.StreamClientInterceptor{
-		clientinterceptor.StreamTimeoutInterceptor(),
+		client.StreamTimeoutInterceptor(),
 		tracing,
 	}
 	return interceptors

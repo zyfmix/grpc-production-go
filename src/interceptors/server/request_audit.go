@@ -2,6 +2,7 @@ package interceptors
 
 import (
 	"context"
+	"fmt"
 	logrus "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -38,6 +39,8 @@ func UnaryAuditServiceRequest() grpc.UnaryServerInterceptor {
 			return nil, status.Errorf(codes.InvalidArgument, "missing metadata")
 		}
 
+		fmt.Printf("[UnaryAuditServiceRequest]metadata:%#v\n", md)
+
 		start := time.Now()
 		resp, err := handler(ctx, req)
 		logRequest(
@@ -45,7 +48,6 @@ func UnaryAuditServiceRequest() grpc.UnaryServerInterceptor {
 			info.FullMethod,
 			md["user-agent"],
 			peer.Addr,
-			info.FullMethod,
 			err,
 		)
 
@@ -68,6 +70,9 @@ func StreamAuditServiceRequest() grpc.StreamServerInterceptor {
 		if !ok {
 			return status.Errorf(codes.InvalidArgument, "missing metadata")
 		}
+
+		fmt.Printf("[StreamAuditServiceRequest]metadata:%#v\n", md)
+
 		start := time.Now()
 		err = handler(srv, stream)
 		logRequest(
@@ -75,15 +80,15 @@ func StreamAuditServiceRequest() grpc.StreamServerInterceptor {
 			info.FullMethod,
 			md["user-agent"],
 			peer.Addr,
-			info.FullMethod,
 			err,
 		)
 		return err
 	}
 }
 
-func logRequest(start time.Time, requestMethod string, userAgents []string, ip net.Addr, fullMethod string, err error) {
+func logRequest(start time.Time, requestMethod string, userAgents []string, ip net.Addr, err error) {
 	if isHealthCheckRequest(requestMethod) {
+		fmt.Printf("[isHealthCheckRequest]requestMethod:%#v\n", requestMethod)
 		return
 	}
 	sts := status.Convert(err)

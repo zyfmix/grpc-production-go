@@ -1,15 +1,15 @@
-package grpc_client
+package main
 
 import (
 	"context"
-	"github.com/apssouza22/grpc-production-go/grpcutils"
-	grpc_server "github.com/apssouza22/grpc-production-go/server"
-	"github.com/apssouza22/grpc-production-go/testdata"
-	gtest "github.com/apssouza22/grpc-production-go/testing"
-	"github.com/apssouza22/grpc-production-go/tlscert"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/examples/helloworld/helloworld"
+	"grpcs/src/grpcutils"
+	helloworld "grpcs/src/rpc/server"
+	grpc_server "grpcs/src/server"
+	"grpcs/src/testdata"
+	gtest "grpcs/src/testing"
+	"grpcs/src/tlscert"
 	"testing"
 )
 
@@ -43,7 +43,7 @@ func TestSayHelloPassingContext(t *testing.T) {
 	clientBuilder.WithInsecure()
 	clientBuilder.WithContext(ctx)
 	clientBuilder.WithOptions(grpc.WithContextDialer(gtest.GetBufDialer(server.GetListener())))
-	clientConn, err := clientBuilder.GetConn("localhost:50051")
+	clientConn, err := clientBuilder.GetConn("localhost:8080")
 
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)
@@ -66,7 +66,7 @@ func TestSayHelloNotPassingContext(t *testing.T) {
 	clientBuilder := GrpcConnBuilder{}
 	clientBuilder.WithInsecure()
 	clientBuilder.WithOptions(grpc.WithContextDialer(gtest.GetBufDialer(server.GetListener())))
-	clientConn, err := clientBuilder.GetConn("localhost:50051")
+	clientConn, err := clientBuilder.GetConn("localhost:8080")
 
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)

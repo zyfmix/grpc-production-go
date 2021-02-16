@@ -1,9 +1,9 @@
-package grpc_server
+package main
 
 import (
-	"github.com/apssouza22/grpc-production-go/grpcutils"
-	"github.com/apssouza22/grpc-production-go/tlscert"
 	"github.com/stretchr/testify/assert"
+	"grpcs/src/grpcutils"
+	"grpcs/src/tlscert"
 	"testing"
 )
 

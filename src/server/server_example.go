@@ -1,25 +1,25 @@
-package grpc_server
+package main
 
 import (
 	"context"
-	"github.com/apssouza22/grpc-production-go/grpcutils"
-	"github.com/apssouza22/grpc-production-go/tlscert"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/examples/helloworld/helloworld"
 	"google.golang.org/grpc/metadata"
+	"grpcs/src/grpcutils"
+	helloworld "grpcs/src/rpc/server"
+	"grpcs/src/tlscert"
 	"log"
 	"os"
 )
 
-type server struct{
+type server struct {
 	// [mustEmbedUnimplemented*** method appear in grpc-server #3794](https://github.com/grpc/grpc-go/issues/3794)
 	helloworld.UnimplementedGreeterServer
 }
 
 func (s *server) SayHello(ctx context.Context, in *helloworld.HelloRequest) (*helloworld.HelloReply, error) {
-	log.Printf("Received: %v", in.Name)
+	log.Printf("SayHello,Received: %v", in.Name)
 	md, _ := metadata.FromIncomingContext(ctx)
-	log.Print(md)
+	log.Print("SayHello,", md)
 	hostname, err := os.Hostname()
 	if err != nil {
 		log.Printf("Unable to get hostname %v", err)
@@ -39,7 +39,7 @@ func ServerInitialization() {
 	builder.EnableReflection(true)
 	s := builder.Build()
 	s.RegisterService(serviceRegister)
-	err := s.Start("0.0.0.0:50051")
+	err := s.Start("0.0.0.0:8080")
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
@@ -56,11 +56,12 @@ func ServerInitializationWithTLS() {
 	addInterceptors(&builder)
 	builder.EnableReflection(true)
 
+	// setter tls cert
 	builder.SetTlsCert(&tlscert.Cert)
 
 	s := builder.Build()
 	s.RegisterService(serviceRegister)
-	err := s.Start("0.0.0.0:50051")
+	err := s.Start("0.0.0.0:8080")
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
