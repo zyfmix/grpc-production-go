@@ -1,0 +1,14 @@
+{
+  "pid": 3551882,
+  "server_ip": "172.17.0.8",
+  "trace": "54505a7e-d79f-43af-b0c7-f30853ab679b",
+  "mcuTimeSerial": {
+    "join_at": "2021-02-07 15:51:27",
+    "leave_at": "0001-01-01 00:00:00"
+  },
+  "JoinTs": 1612684287,
+  "LeaveAt": "0001-01-01 00:00:00",
+  "LeaveTs": -62135596800,
+  "LeaveSecond": 0,
+  "LeaveNanosecond": 0
+}
