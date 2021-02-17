@@ -1,14 +1,15 @@
-package source
+package main
 
 import (
 	"github.com/stretchr/testify/assert"
 	"grpcs/src/grpcutils"
+	"grpcs/src/server/source"
 	"grpcs/src/tlscert"
 	"testing"
 )
 
 func TestBuildGrpcServer(t *testing.T) {
-	builder := &GrpcServerBuilder{}
+	builder := &source.GrpcServerBuilder{}
 	builder.SetTlsCert(&tlscert.Cert)
 	builder.DisableDefaultHealthCheck(true)
 	builder.EnableReflection(true)
