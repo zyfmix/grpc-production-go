@@ -4,10 +4,10 @@ import (
 	"context"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
-	source2 "grpcs/src/client/source"
-	"grpcs/src/grpcutils"
+	client_source "grpcs/src/client/source"
+	"grpcs/src/interceptors"
 	helloworld "grpcs/src/rpc/server"
-	"grpcs/src/server/source"
+	server_source "grpcs/src/server/source"
 	"grpcs/src/testdata"
 	gtest "grpcs/src/testing"
 	"grpcs/src/tlscert"
@@ -18,29 +18,30 @@ var server gtest.GrpcInProcessingServer
 
 func startServer() {
 	builder := gtest.GrpcInProcessingServerBuilder{}
-	builder.SetUnaryInterceptors(grpcutils.GetDefaultUnaryServerInterceptors())
+	builder.SetUnaryInterceptors(interceptors.GetDefaultUnaryServerInterceptors())
 	server = builder.Build()
 	server.RegisterService(func(server *grpc.Server) {
 		helloworld.RegisterGreeterServer(server, &testdata.MockedService{})
 	})
 	server.Start()
 }
-func startServerWithTLS() source.GrpcServer {
-	builder := source.GrpcServerBuilder{}
-	builder.SetUnaryInterceptors(grpcutils.GetDefaultUnaryServerInterceptors())
+
+func startServerWithTLS() server_source.GrpcServer {
+	builder := server_source.GrpcServerBuilder{}
+	builder.SetUnaryInterceptors(interceptors.GetDefaultUnaryServerInterceptors())
 	builder.SetTlsCert(&tlscert.Cert)
-	svr := builder.Build()
-	svr.RegisterService(func(server *grpc.Server) {
+	svc := builder.Build()
+	svc.RegisterService(func(server *grpc.Server) {
 		helloworld.RegisterGreeterServer(server, &testdata.MockedService{})
 	})
-	svr.Start("localhost:8989")
-	return svr
+	svc.Start("localhost:8989")
+	return svc
 }
 
 func TestSayHelloPassingContext(t *testing.T) {
 	startServer()
 	ctx := context.Background()
-	clientBuilder := source2.GrpcConnBuilder{}
+	clientBuilder := client_source.GrpcConnBuilder{}
 	clientBuilder.WithInsecure()
 	clientBuilder.WithContext(ctx)
 	clientBuilder.WithOptions(grpc.WithContextDialer(gtest.GetBufDialer(server.GetListener())))
@@ -64,7 +65,7 @@ func TestSayHelloPassingContext(t *testing.T) {
 func TestSayHelloNotPassingContext(t *testing.T) {
 	startServer()
 	ctx := context.Background()
-	clientBuilder := source2.GrpcConnBuilder{}
+	clientBuilder := client_source.GrpcConnBuilder{}
 	clientBuilder.WithInsecure()
 	clientBuilder.WithOptions(grpc.WithContextDialer(gtest.GetBufDialer(server.GetListener())))
 	clientConn, err := clientBuilder.GetConn("localhost:8080")
@@ -89,7 +90,7 @@ func TestTLSConnWithCert(t *testing.T) {
 	defer serverWithTLS.GetListener().Close()
 
 	ctx := context.Background()
-	clientBuilder := source2.GrpcConnBuilder{}
+	clientBuilder := client_source.GrpcConnBuilder{}
 	clientBuilder.WithContext(ctx)
 	clientBuilder.WithBlock()
 	clientBuilder.WithClientTransportCredentials(false, tlscert.CertPool)
@@ -107,7 +108,7 @@ func TestTLSConnWithInsecure(t *testing.T) {
 	defer serverWithTLS.GetListener().Close()
 
 	ctx := context.Background()
-	clientBuilder := source2.GrpcConnBuilder{}
+	clientBuilder := client_source.GrpcConnBuilder{}
 	clientBuilder.WithContext(ctx)
 	clientBuilder.WithBlock()
 	clientBuilder.WithClientTransportCredentials(true, nil)

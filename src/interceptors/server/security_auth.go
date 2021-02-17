@@ -19,22 +19,24 @@ func StreamAuthentication() grpc.StreamServerInterceptor {
 
 func securityContextHandle(ctx context.Context) (context.Context, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
-
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, "Retrieving metadata is failed")
 	}
+
 	user, ok := md["user"]
 	pass, ok := md["pass"]
 	if !ok {
-		return nil, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+		return nil, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied.")
 	}
 
-	if user[0] != "user" || pass[0] != "123" {
-		return nil, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied")
+	if user[0] != "zhangyafeing" || pass[0] != "123456789" {
+		return nil, status.Errorf(codes.Unauthenticated, "Authorization token is not supplied...")
 	}
-	type authInfo struct {
-		name string
-	}
-	newCtx := context.WithValue(ctx, "authInfo", authInfo{"foo"})
+
+	newCtx := context.WithValue(ctx, "authSecurity", AuthSecurity{"foo-s"})
 	return newCtx, nil
+}
+
+type AuthSecurity struct {
+	Name string
 }

@@ -1,4 +1,4 @@
-package grpcutils
+package interceptors
 
 import (
 	"github.com/stretchr/testify/assert"

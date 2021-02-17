@@ -10,15 +10,7 @@ import (
 //UnaryPropagateHeaderInterceptor copy given fields from Incoming request into Outgoing request
 // Empty array will make the interceptor copy all metadata in the context
 func UnaryPropagateHeaderInterceptor(fields []string) grpc.UnaryClientInterceptor {
-	return func(
-		ctx context.Context,
-		method string,
-		req interface{},
-		reply interface{},
-		cc *grpc.ClientConn,
-		invoker grpc.UnaryInvoker,
-		opts ...grpc.CallOption,
-	) error {
+	return func(ctx context.Context, method string, req interface{}, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if ok {
 			pairs := transformMapToPairs(md, fields)
@@ -32,13 +24,7 @@ func UnaryPropagateHeaderInterceptor(fields []string) grpc.UnaryClientIntercepto
 //StreamPropagateHeaderInterceptor copy given fields from Incoming request into Outgoing request
 // Empty array will make the interceptor copy all metadata in the context
 func StreamPropagateHeaderInterceptor(fields []string) grpc.StreamClientInterceptor {
-	return func(
-		ctx context.Context,
-		desc *grpc.StreamDesc,
-		cc *grpc.ClientConn,
-		method string,
-		streamer grpc.Streamer,
-		opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if ok {
 			pairs := transformMapToPairs(md, fields)

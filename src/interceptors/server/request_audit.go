@@ -23,11 +23,7 @@ func SetHealthCheckMethodName(methodName string) {
 
 // Logging request information for Unary requests
 func UnaryAuditServiceRequest() grpc.UnaryServerInterceptor {
-	return func(
-		ctx context.Context,
-		req interface{},
-		info *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (_ interface{}, err error) {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
 		// Extract all needed info for audit from the RPC call
 		peer, ok := peer.FromContext(ctx)
 		if !ok {
@@ -43,13 +39,10 @@ func UnaryAuditServiceRequest() grpc.UnaryServerInterceptor {
 
 		start := time.Now()
 		resp, err := handler(ctx, req)
-		logRequest(
-			start,
-			info.FullMethod,
-			md["user-agent"],
-			peer.Addr,
-			err,
-		)
+
+		//fmt.Printf("[UnaryAuditServiceRequest]resp:%#v\n", resp)
+
+		logRequest(start, info.FullMethod, md["user-agent"], peer.Addr, err)
 
 		return resp, err // passing up the chain the response and the err
 	}
@@ -57,11 +50,7 @@ func UnaryAuditServiceRequest() grpc.UnaryServerInterceptor {
 
 // Logging request information for Stream requests
 func StreamAuditServiceRequest() grpc.StreamServerInterceptor {
-	return func(
-		srv interface{},
-		stream grpc.ServerStream,
-		info *grpc.StreamServerInfo,
-		handler grpc.StreamHandler) (err error) {
+	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		peer, ok := peer.FromContext(stream.Context())
 		if !ok {
 			return status.Errorf(codes.InvalidArgument, "missing peer info")
@@ -71,24 +60,20 @@ func StreamAuditServiceRequest() grpc.StreamServerInterceptor {
 			return status.Errorf(codes.InvalidArgument, "missing metadata")
 		}
 
-		fmt.Printf("[StreamAuditServiceRequest]metadata:%#v\n", md)
+		//fmt.Printf("[StreamAuditServiceRequest]metadata:%#v\n", md)
 
 		start := time.Now()
 		err = handler(srv, stream)
-		logRequest(
-			start,
-			info.FullMethod,
-			md["user-agent"],
-			peer.Addr,
-			err,
-		)
+
+		logRequest(start, info.FullMethod, md["user-agent"], peer.Addr, err)
+
 		return err
 	}
 }
 
 func logRequest(start time.Time, requestMethod string, userAgents []string, ip net.Addr, err error) {
 	if isHealthCheckRequest(requestMethod) {
-		fmt.Printf("[isHealthCheckRequest]requestMethod:%#v\n", requestMethod)
+		fmt.Printf("[isHealthCheckRequest]requestMethod:%#v,userAgents:%#v,ip:%#v\n", requestMethod, userAgents, ip.String())
 		return
 	}
 	sts := status.Convert(err)
@@ -119,13 +104,13 @@ func logRequest(start time.Time, requestMethod string, userAgents []string, ip n
 		codes.Unimplemented, // usually caused by client requesting invalid operation (even though it matches 501)
 		codes.Unauthenticated:
 
-		log.Warn("gRPC call failed")
+		log.Warn("gRPC call failed,sts.Code:", sts.Code())
 
 	// Server errors (http 5xx equiv.):
 	// Unknown, DeadlineExceeded, ResourceExhausted, Internal, Unavailable, DataLoss
 	// (ResourceExhausted is somewhere in between, from user quota exhausted to OOM, rather have it on error for now)
 	default:
-		log.Error("gRPC call errored")
+		log.Error("gRPC call errored,sts.Code:", sts.Code())
 	}
 }
 

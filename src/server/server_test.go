@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"grpcs/src/grpcutils"
+	"grpcs/src/interceptors"
 	"grpcs/src/server/source"
 	"grpcs/src/tlscert"
 	"testing"
@@ -13,8 +13,8 @@ func TestBuildGrpcServer(t *testing.T) {
 	builder.SetTlsCert(&tlscert.Cert)
 	builder.DisableDefaultHealthCheck(true)
 	builder.EnableReflection(true)
-	builder.SetStreamInterceptors(grpcutils.GetDefaultStreamServerInterceptors())
-	builder.SetUnaryInterceptors(grpcutils.GetDefaultUnaryServerInterceptors())
+	builder.SetStreamInterceptors(interceptors.GetDefaultStreamServerInterceptors())
+	builder.SetUnaryInterceptors(interceptors.GetDefaultUnaryServerInterceptors())
 	server := builder.Build()
 	assert.NotNil(t, server)
 }

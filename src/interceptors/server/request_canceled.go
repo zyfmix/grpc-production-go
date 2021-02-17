@@ -10,13 +10,14 @@ import (
 // Log the request that has been cancelled by the client during the Unary request
 // The request can be cancelled for many reasons, including timeout exceeded
 func UnaryLogRequestCanceled() grpc.UnaryServerInterceptor {
-	return func(
-		ctx context.Context,
-		req interface{},
-		info *grpc.UnaryServerInfo,
-		handler grpc.UnaryHandler) (_ interface{}, err error) {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (_ interface{}, err error) {
+		//fmt.Printf("[UnaryLogRequestCanceled]req:%#v\n", req)
+
 		start := time.Now()
 		resp, err := handler(ctx, req)
+
+		//fmt.Printf("[UnaryLogRequestCanceled]resp:%#v\n", resp)
+
 		if ctx.Err() == context.Canceled {
 			logCanceledRequest(start, err, info.FullMethod)
 		}
@@ -28,9 +29,10 @@ func UnaryLogRequestCanceled() grpc.UnaryServerInterceptor {
 // The request can be cancelled for many reasons, including timeout exceeded
 func StreamLogRequestCanceled() grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
+		//fmt.Printf("[StreamLogRequestCanceled]stream:%#v\n", stream)
+
 		start := time.Now()
 		err = handler(srv, stream)
-
 		if stream.Context().Err() == context.Canceled {
 			logCanceledRequest(start, err, info.FullMethod)
 		}

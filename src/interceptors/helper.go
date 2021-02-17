@@ -1,4 +1,4 @@
-package grpcutils
+package interceptors
 
 import (
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
@@ -22,6 +22,8 @@ func GetDefaultUnaryServerInterceptors() []grpc.UnaryServerInterceptor {
 	return []grpc.UnaryServerInterceptor{
 		interceptors.UnaryAuditServiceRequest(),
 		interceptors.UnaryLogRequestCanceled(),
+		// Auth
+		//interceptors.UnaryAuthentication(),
 		//Recovery handlers should typically be last in the chain so that other middleware
 		// (e.g. logging) can operate on the recovered state instead of being directly affected by any panic
 		grpc_recovery.UnaryServerInterceptor(grpc_recovery.WithRecoveryHandler(requestErrorHandler)),
@@ -33,6 +35,8 @@ func GetDefaultStreamServerInterceptors() []grpc.StreamServerInterceptor {
 	return []grpc.StreamServerInterceptor{
 		interceptors.StreamAuditServiceRequest(),
 		interceptors.StreamLogRequestCanceled(),
+		// Auth
+		//interceptors.StreamAuthentication(),
 		grpc_recovery.StreamServerInterceptor(grpc_recovery.WithRecoveryHandler(requestErrorHandler)),
 	}
 }
