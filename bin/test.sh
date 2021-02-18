@@ -43,4 +43,12 @@ println "GRpc Service Describe"
 $grpcs -H 'trace: 33333333333333333333333' localhost:8080 describe helloworld.Greeter.SayHello
 $grpcs -H 'trace: 44444444444444444444444' localhost:8080 describe helloworld.Greeter.SayList
 
+println "Server-Client"
+
+# server
+go run src/rpc/echo/server/main.go
+
+# client
+go run src/rpc/echo/client/main.go
+
 println "Ended"

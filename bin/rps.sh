@@ -16,7 +16,8 @@ source $rs_path/bin/libs/headers.sh
 # 首先清除已编译文件
 ebc_info "首先清除已编译文件..."
 #mkdir -p $rs_path/src/rpc/server && rm -rf $rs_path/src/rpc/server/*
-rm -rf $rs_path/src/rpc/*/*.pb.go
+rm -rf $rs_path/src/rpc/*/proto/*.pb.go
+rm -rf $rs_path/src/rpc/*/proto/*.pb.go
 
 # 编译环境
 ENV=${1:-"local"}
@@ -30,8 +31,14 @@ for rpc_fp in "$rpc_path"/*; do
   rpc_fn=$(basename -- "$rpc_fp")
   echo "[proto->*.pb.go][rpc_fp: $rpc_fp][rpc_fn: $rpc_fn]"
   # compile rpc proto file
-  protoc -I src/rpc/$rpc_fn src/rpc/$rpc_fn/*.proto --go_out=plugins=grpc:src/rpc/$rpc_fn
+  #  protoc -I src/rpc/$rpc_fn src/rpc/$rpc_fn/*.proto --go_out=plugins=grpc:src/rpc/$rpc_fn
+
+  protoc --go_out=src/rpc/$rpc_fn/proto --go-grpc_out=src/rpc/$rpc_fn/proto src/rpc/$rpc_fn/proto/*.proto
+
+  #  protoc -I src/rpc/$rpc_fn --go-grpc_out src/rpc/$rpc_fn/ --go-grpc_opt paths=source_relative src/rpc/$rpc_fn/*.proto
 done
 
+#protoc --go_out=src/rpc/rpc_error/proto src/rpc/rpc_error/proto/rpc_error.proto
+#protoc --go-grpc_out=src/rpc/rpc_error/proto src/rpc/rpc_error/proto/rpc_error.proto
 # 编译文件
-#protoc -I src/rpc/proto src/rpc/proto/demo.proto --go_out=plugins=grpc:src/rpc/server
+#protoc -I src/rpc/proto src/rpc/proto/demo.proto --go-grpc_out=plugins=grpc:src/rpc/server

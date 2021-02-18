@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	interceptors2 "grpcs/src/interceptors"
 	interceptors "grpcs/src/interceptors/server"
-	helloworld "grpcs/src/rpc/helloworld"
+	helloworld "grpcs/src/rpc/helloworld/proto"
 	"grpcs/src/tlscert"
 	"io"
 	"log"

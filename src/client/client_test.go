@@ -6,7 +6,8 @@ import (
 	"google.golang.org/grpc"
 	client_source "grpcs/src/client/source"
 	"grpcs/src/interceptors"
-	helloworld "grpcs/src/rpc/server"
+	"grpcs/src/rpc/helloworld"
+	"grpcs/src/rpc/helloworld/proto"
 	server_source "grpcs/src/server/source"
 	"grpcs/src/testdata"
 	gtest "grpcs/src/testing"
@@ -21,7 +22,7 @@ func startServer() {
 	builder.SetUnaryInterceptors(interceptors.GetDefaultUnaryServerInterceptors())
 	server = builder.Build()
 	server.RegisterService(func(server *grpc.Server) {
-		helloworld.RegisterGreeterServer(server, &testdata.MockedService{})
+		proto.RegisterGreeterServer(server, &testdata.MockedService{})
 	})
 	server.Start()
 }
@@ -32,7 +33,7 @@ func startServerWithTLS() server_source.GrpcServer {
 	builder.SetTlsCert(&tlscert.Cert)
 	svc := builder.Build()
 	svc.RegisterService(func(server *grpc.Server) {
-		helloworld.RegisterGreeterServer(server, &testdata.MockedService{})
+		proto.RegisterGreeterServer(server, &testdata.MockedService{})
 	})
 	svc.Start("localhost:8989")
 	return svc
@@ -51,7 +52,7 @@ func TestSayHelloPassingContext(t *testing.T) {
 		t.Fatalf("Failed to dial bufnet: %v", err)
 	}
 	defer clientConn.Close()
-	client := helloworld.NewGreeterClient(clientConn)
+	client := proto.NewGreeterClient(clientConn)
 	request := &helloworld.HelloRequest{Name: "test"}
 	resp, err := client.SayHello(ctx, request)
 	if err != nil {
@@ -74,7 +75,7 @@ func TestSayHelloNotPassingContext(t *testing.T) {
 		t.Fatalf("Failed to dial bufnet: %v", err)
 	}
 	defer clientConn.Close()
-	client := helloworld.NewGreeterClient(clientConn)
+	client := proto.NewGreeterClient(clientConn)
 	request := &helloworld.HelloRequest{Name: "test"}
 	resp, err := client.SayHello(ctx, request)
 	if err != nil {
@@ -96,7 +97,7 @@ func TestTLSConnWithCert(t *testing.T) {
 	clientBuilder.WithClientTransportCredentials(false, tlscert.CertPool)
 	clientConn, _ := clientBuilder.GetTlsConn("localhost:8989")
 	defer clientConn.Close()
-	client := helloworld.NewGreeterClient(clientConn)
+	client := proto.NewGreeterClient(clientConn)
 	request := &helloworld.HelloRequest{Name: "test"}
 	resp, err := client.SayHello(ctx, request)
 	assert.NoError(t, err)
@@ -114,7 +115,7 @@ func TestTLSConnWithInsecure(t *testing.T) {
 	clientBuilder.WithClientTransportCredentials(true, nil)
 	clientConn, _ := clientBuilder.GetTlsConn("localhost:8989")
 	defer clientConn.Close()
-	client := helloworld.NewGreeterClient(clientConn)
+	client := proto.NewGreeterClient(clientConn)
 	request := &helloworld.HelloRequest{Name: "test"}
 	resp, err := client.SayHello(ctx, request)
 	assert.NoError(t, err)

@@ -2,11 +2,12 @@ package testdata
 
 import (
 	"context"
-	helloworld "grpcs/src/rpc/server"
+	"grpcs/src/rpc/helloworld"
+	"grpcs/src/rpc/helloworld/proto"
 )
 
 type MockedService struct {
-	helloworld.UnimplementedGreeterServer
+	proto.UnimplementedGreeterServer
 }
 
 func (s *MockedService) SayHello(ctx context.Context, in *helloworld.HelloRequest) (*helloworld.HelloReply, error) {

@@ -5,7 +5,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"grpcs/src/interceptors"
-	helloworld "grpcs/src/rpc/server"
+	"grpcs/src/rpc/helloworld"
+	"grpcs/src/rpc/helloworld/proto"
 	"grpcs/src/testdata"
 	"testing"
 )
@@ -17,7 +18,7 @@ func serverStart() {
 	builder.SetUnaryInterceptors(interceptors.GetDefaultUnaryServerInterceptors())
 	server = builder.Build()
 	server.RegisterService(func(server *grpc.Server) {
-		helloworld.RegisterGreeterServer(server, &testdata.MockedService{})
+		proto.RegisterGreeterServer(server, &testdata.MockedService{})
 	})
 	server.Start()
 }
@@ -31,7 +32,7 @@ func TestSayHello(t *testing.T) {
 		t.Fatalf("Failed to dial bufnet: %v", err)
 	}
 	defer clientConn.Close()
-	client := helloworld.NewGreeterClient(clientConn)
+	client := proto.NewGreeterClient(clientConn)
 	request := &helloworld.HelloRequest{Name: "test"}
 	resp, err := client.SayHello(ctx, request)
 	if err != nil {

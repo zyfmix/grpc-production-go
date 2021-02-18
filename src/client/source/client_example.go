@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/metadata"
 	"grpcs/src/interceptors"
-	helloworld "grpcs/src/rpc/helloworld"
+	helloworld "grpcs/src/rpc/helloworld/proto"
 	"grpcs/src/tlscert"
 	"io"
 	"log"
