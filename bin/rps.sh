@@ -38,6 +38,8 @@ for rpc_fp in "$rpc_path"/*; do
   #  protoc -I src/rpc/$rpc_fn --go-grpc_out src/rpc/$rpc_fn/ --go-grpc_opt paths=source_relative src/rpc/$rpc_fn/*.proto
 done
 
+#protoc --grpc-gateway_out . --grpc-gateway_opt logtostderr=true --grpc-gateway_opt paths=source_relative --grpc-gateway_opt generate_unbound_methods=true src/rpc/echo/proto/*.proto
+
 #protoc --go_out=src/rpc/rpc_error/proto src/rpc/rpc_error/proto/rpc_error.proto
 #protoc --go-grpc_out=src/rpc/rpc_error/proto src/rpc/rpc_error/proto/rpc_error.proto
 # 编译文件

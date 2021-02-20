@@ -26,7 +26,7 @@ func main() {
 
 	// echo msg
 	msg := "says"
-	if len(os.Args) > 0 {
+	if len(os.Args) > 1 {
 		msg = os.Args[1]
 	}
 

@@ -52,6 +52,10 @@ grpc-proxy是谷歌的协议缓冲区编译器的一个插件 protoc，它读取
 * 安装 `protoc-gen-grpc-gateway` 和 `go` 库
 
 ```bash
+wget https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v2.2.0/protoc-gen-grpc-gateway-v2.2.0-darwin-x86_64
+```
+
+```bash
 # 打开grpc-gateway的github官网 https://github.com/grpc-ecosystem/grpc-gateway/releases/tag/v1.16.0，下载系统对应版本
 # 安装grpc-gateway
 wget https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v1.16.0/protoc-gen-grpc-gateway-v1.16.0-windows-x86_64.exe -O protoc-gen-grpc-gateway.exe

@@ -21,10 +21,19 @@ option java_outer_classname = "HelloWorldProto";
 
 package helloworld;
 
+// 这里导入的annotations.proto文件在$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/google/api目录下，在安装grpc-gateway的go库的目录
+import "google/api/annotations.proto";
+
 // The greeting service definition.
 service Greeter {
   // 一元RPC
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  //rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    option (google.api.http) = {
+      post: "/v1/sayHello"
+      body: "*"
+    };
+  }
   // 服务端流式RPC
   rpc SayList (HelloRequest) returns (stream HelloReply) {}
   // 客户端流式RPC
